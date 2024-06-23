@@ -1,0 +1,110 @@
+[
+  {
+    "servicesTaken": [
+      {
+        "serviceName": "Haircut(women)",
+        "price": "25"
+      }
+    ],
+    "stylish": "sabir",
+    "totalAmount": 25,
+    "id": "c6f1c84517f890cfbda3350eb6d70ea9",
+    "time": "6/22/2024"
+  },
+  {
+    "servicesTaken": [
+      {
+        "serviceName": "Haircut(men)",
+        "price": "25"
+      }
+    ],
+    "stylish": "kabir",
+    "totalAmount": 25,
+    "id": "5bab69c21414d0fe034f48b3bfd63e29",
+    "time": "6/22/2024"
+  },
+  {
+    "servicesTaken": [
+      {
+        "serviceName": "Haircut(men)",
+        "price": "25"
+      }
+    ],
+    "stylish": "mohit",
+    "totalAmount": 25,
+    "id": "0e093201b910f467b3200b617d4235d2",
+    "time": "6/22/2024"
+  },
+  {
+    "servicesTaken": [
+      {
+        "serviceName": "Haircut(women)",
+        "price": "25"
+      }
+    ],
+    "stylish": "sabir",
+    "totalAmount": 25,
+    "id": "76cd767436c4a346de7072e4629a22f9",
+    "time": "6/22/2024"
+  },
+  {
+    "servicesTaken": [
+      {
+        "serviceName": "Haircut(women)",
+        "price": "25"
+      },
+      {
+        "serviceName": "Haircut(men)",
+        "price": "25"
+      }
+    ],
+    "stylish": "mohit",
+    "totalAmount": 50,
+    "id": "4d43beaaafc01a6ac74054e787e2da4e",
+    "time": "6/22/2024"
+  },
+  {
+    "servicesTaken": [
+      {
+        "serviceName": "Haircut(it)",
+        "price": "25"
+      }
+    ],
+    "stylish": "sabir",
+    "totalAmount": 25,
+    "id": "0fba72a79f3078670467df9a05760457",
+    "time": "6/22/2024"
+  },
+  {
+    "servicesTaken": [
+      {
+        "serviceName": "Haircut(Kidssss)",
+        "price": "20"
+      },
+      {
+        "serviceName": "Haircut(men)",
+        "price": "25"
+      },
+      {
+        "serviceName": "Beard",
+        "price": "30"
+      }
+    ],
+    "stylish": "sabir",
+    "totalAmount": 75,
+    "id": "134bc769197dd25311d9e22939ad9a9e",
+    "time": "2024-06-22T09:06:13.073Z"
+  },
+  {
+    "servicesTaken": [
+      {
+        "serviceName": "Haircut(women)",
+        "price": "25"
+      }
+    ],
+    "stylish": "kabir",
+    "totalAmount": 92,
+    "id": "644e6aa121b75f16a39db2cb056a7f74",
+    "time": "2024-06-22T20:33:26.630Z"
+  }
+]
