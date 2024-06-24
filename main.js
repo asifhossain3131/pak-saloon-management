@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 import express from 'express';
 import bodyParser from 'body-parser';
 import fs from 'fs';
-import { PrinterTypes } from 'node-thermal-printer';
+import { PrinterTypes,ThermalPrinter } from 'node-thermal-printer';
 import crypto from 'crypto';
 import cors from 'cors';
 import * as dotenv from 'dotenv';
@@ -106,9 +106,12 @@ const startExpressServer = () => {
   };
 
   async function printReceipt(salesData) {
-    let printer = new printer({
+    let printer = new ThermalPrinter({
         type: PrinterTypes.EPSON, // Printer type: 'star' or 'epson'
-        interface: 'tcp://192.168.0.100' // Printer interface (Replace with your printer's IP)
+        interface: 'tcp://192.168.0.100', // Printer interface (Replace with your printer's IP)
+        options: {
+          timeout: 5000 // Increase timeout to 5 seconds
+        }
     });
 
     printer.alignCenter();
@@ -124,10 +127,10 @@ const startExpressServer = () => {
     printer.drawLine();
 
     printer.alignLeft();
-    salesData.items.forEach(item => {
+    salesData?.servicesTaken?.forEach(item => {
         printer.tableCustom([
-            { text: item.name, align: 'LEFT', width: 0.5 },
-            { text: item.price.toFixed(2), align: 'RIGHT', width: 0.5 },
+            { text: item?.serviceName, align: 'LEFT', width: 0.5 },
+            { text: item?.price, align: 'RIGHT', width: 0.5 },
         ]);
     });
 
@@ -135,24 +138,28 @@ const startExpressServer = () => {
 
     printer.tableCustom([
         { text: 'Total before VAT', align: 'LEFT', width: 0.5 },
-        { text: salesData.totalBeforeVAT.toFixed(2), align: 'RIGHT', width: 0.5 },
+        // { text: salesData.amountExcludingVat, align: 'RIGHT', width: 0.5 },
     ]);
 
     printer.tableCustom([
         { text: 'VAT incl.', align: 'LEFT', width: 0.5 },
-        { text: salesData.vat.toFixed(2), align: 'RIGHT', width: 0.5 },
+        { text: '5%', align: 'RIGHT', width: 0.5 },
     ]);
 
     printer.tableCustom([
         { text: 'Total', align: 'LEFT', width: 0.5 },
-        { text: salesData.total.toFixed(2), align: 'RIGHT', width: 0.5 },
+        { text: salesData?.totalAmount, align: 'RIGHT', width: 0.5 },
     ]);
 
     printer.drawLine();
-    printer.println(`Date: ${new Date(salesData.time).toLocaleDateString()}`);
+    printer.println(`Date: ${new Date(salesData?.time).toLocaleDateString()}`);
 
     printer.cut();
-    await printer.execute();
+    await printer.execute(function(err) {
+      if (err) {
+        return console.error("Error printing receipt: ", err);
+      }
+  })
 }
 
 
@@ -303,31 +310,37 @@ const startExpressServer = () => {
 expressApp.put('/api/updateServices', (req, res) => {
   const { serviceId, serviceName, img, price } = req.body;
   const filePath = path.join(__dirname, 'saloon-system', 'data', 'services.json');
+
   try {
-      // Parse existing services data
-      const servicesData = parsedData(filePath);
+    // Parse existing services data
+    const servicesData = parsedData(filePath);
 
-      // Find the service with the matching serviceId
-      const singleService = servicesData?.find(service=>service.id===serviceId)
-     
+    // Find the index of the service with the matching serviceId
+    const serviceIndex = servicesData.findIndex(service => service?.id === serviceId);
 
-      // Update service properties
-      singleService?.name = serviceName;
-      singleService?.img = img;
-      singleService?.price = price;
+    // If the service is not found, return an error
+    if (serviceIndex === -1) {
+      return res.status(404).json({ success: false, message: `Service with ID ${serviceId} not found` });
+    }
 
-      // Save the updated services data
-      const jsonData = JSON.stringify(servicesData, null, 2); // null and 2 are for formatting (indentation)
+    // Update service properties
+    if (serviceName) servicesData[serviceIndex].serviceName = serviceName;
+    if (img) servicesData[serviceIndex].img = img;
+    if (price) servicesData[serviceIndex].price = price;
 
-      // Write data to file
-      fs.writeFileSync(filePath, jsonData);
+    // Save the updated services data
+    const jsonData = JSON.stringify(servicesData, null, 2); // null and 2 are for formatting (indentation)
+    
+    // Write data to file
+    fs.writeFileSync(filePath, jsonData);
 
-      res.status(200).json({ success: true, message: `Service with ID ${serviceId} updated successfully` });
-  } catch (error) {
-      console.error('Error updating service:', error);
-      res.status(500).json({ success: false, message: 'Failed to update service' });
+    res.status(200).json({ success: true, message: `Service with ID ${serviceId} updated successfully` });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'An error occurred while updating the service' });
   }
 });
+
 
   expressApp.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

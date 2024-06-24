@@ -23,7 +23,6 @@ const Services = () => {
     const [img, setImg] = useState('');
     const [statusType,setStatusType]=useState('')
     const [currentSingleSeriveId,setCurrentSingleServiceId]=useState('')
-
     useEffect(() => {
         const fetchServices = async () => {
             const services = await axios.get('http://localhost:5000/api/services');
@@ -46,7 +45,7 @@ const Services = () => {
                 setOpen(false);
             }
            }else if(statusType==='update'){
-            const response = await axios.put('http://localhost:5000/api/updateServices', {...newService,servicdeId:currentSingleSeriveId});
+            const response = await axios.put('http://localhost:5000/api/updateServices', {...newService,serviceId:currentSingleSeriveId});
             if (response?.data?.success) {
                 toast.success('single service updated')
                 setOpen(false);
