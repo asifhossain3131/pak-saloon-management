@@ -24,6 +24,7 @@ const Sidebar = () => {
         {path:'/',text:'Home'},
         {path:'/services',text:'Services'},
         {path:'/sales-reports',text:'Daily Sales'},
+        {path:'/stylish',text:'Stylish profiles'}
     ]
     return (
       <Box sx={{ display: 'flex' }}>
@@ -51,7 +52,7 @@ const Sidebar = () => {
             </List>
             <Divider />
             <List>
-              {['All mail', 'Trash', 'Spam'].map((text) => (
+              {['Sales report', 'Personal Data', 'License'].map((text) => (
                 <ListItem key={text}>
                   <ListItemButton>{text}</ListItemButton>
                 </ListItem>

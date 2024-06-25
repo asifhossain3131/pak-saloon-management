@@ -1,13 +1,13 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import express from 'express';
 import bodyParser from 'body-parser';
 import fs from 'fs';
-import { PrinterTypes,ThermalPrinter } from 'node-thermal-printer';
-import crypto from 'crypto';
 import cors from 'cors';
 import * as dotenv from 'dotenv';
+import { checkExistField, checkExistFile, createNewFile, generateDynamicId, parsedData, printReceipt, salesFilePath, saveNewData, servicesFilePath, stylishesFilePath } from './serverUtils.js';
+import { fileURLToPath } from 'url';
+
 
 // Load environment variables from .env file
 dotenv.config();
@@ -17,8 +17,7 @@ process.on('unhandledRejection', (reason, promise) => {
     console.error('Unhandled Rejection at:', promise, 'reason:', reason);
     // Application specific logging, throwing an error, or other logic here
   });
-  
-// Convert import.meta.url to __dirname
+  // Convert import.meta.url to __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -69,116 +68,19 @@ const startExpressServer = () => {
     res.send('server is running');
   });
 
-  // ----------------------------------------------------------------------------------------------------------------
 
-  // utils functions
-  const generateDynamicId = () => {
-    const dynamicId = crypto.randomBytes(16).toString('hex');
-    return dynamicId;
-  };
-
-  const checkExistFile = (filePath) => {
-    const existFile = fs.existsSync(filePath);
-    return existFile;
-  };
-
-  const createNewFile = (filePath) => {
-    const dirPath = path.dirname(filePath);
-    if (!fs.existsSync(dirPath)) {
-        fs.mkdirSync(dirPath, { recursive: true });
-    }
-    fs.writeFileSync(filePath, JSON.stringify([]));
-};
-  const parsedData = (filePath) => {
-    const data = fs.readFileSync(filePath, 'utf-8');
-    const parsedData = JSON.parse(data);
-    return parsedData;
-  };
-
-  const saveNewData = (filePath, parsedData, addedData) => {
-    parsedData.push(addedData);
-    fs.writeFileSync(filePath, JSON.stringify(parsedData, null, 2));
-  };
-
-  const checkExistField = (dataArray, fieldName, value) => {
-    const existingField = dataArray?.find((data) => data[fieldName] === value);
-    return !!existingField;
-  };
-
-  async function printReceipt(salesData) {
-    let printer = new ThermalPrinter({
-        type: PrinterTypes.EPSON, // Printer type: 'star' or 'epson'
-        interface: 'tcp://192.168.0.100', // Printer interface (Replace with your printer's IP)
-        options: {
-          timeout: 5000 // Increase timeout to 5 seconds
-        }
-    });
-
-    printer.alignCenter();
-    printer.bold(true);
-    printer.setTextDoubleHeight();
-    printer.setTextDoubleWidth();
-    printer.println('TAX INVOICE');
-    printer.bold(false);
-    printer.setTextNormal();
-    printer.println('ABC LLC');
-    printer.println('Street, Emirate, UAE');
-    printer.println(`TRN 101234567890003`);
-    printer.drawLine();
-
-    printer.alignLeft();
-    salesData?.servicesTaken?.forEach(item => {
-        printer.tableCustom([
-            { text: item?.serviceName, align: 'LEFT', width: 0.5 },
-            { text: item?.price, align: 'RIGHT', width: 0.5 },
-        ]);
-    });
-
-    printer.drawLine();
-
-    printer.tableCustom([
-        { text: 'Total before VAT', align: 'LEFT', width: 0.5 },
-        // { text: salesData.amountExcludingVat, align: 'RIGHT', width: 0.5 },
-    ]);
-
-    printer.tableCustom([
-        { text: 'VAT incl.', align: 'LEFT', width: 0.5 },
-        { text: '5%', align: 'RIGHT', width: 0.5 },
-    ]);
-
-    printer.tableCustom([
-        { text: 'Total', align: 'LEFT', width: 0.5 },
-        { text: salesData?.totalAmount, align: 'RIGHT', width: 0.5 },
-    ]);
-
-    printer.drawLine();
-    printer.println(`Date: ${new Date(salesData?.time).toLocaleDateString()}`);
-
-    printer.cut();
-    await printer.execute(function(err) {
-      if (err) {
-        return console.error("Error printing receipt: ", err);
-      }
-  })
-}
-
-
-  // ---------------------------------------------------------------------------------------------------------------------------
-
-  // sales related
+  // sales related apis
   expressApp.post('/api/sales', async (req, res) => {
     let saleId = generateDynamicId();
     const reqBody = req.body;
     try {
-        const filePath = path.join(__dirname, 'saloon-system', 'data', 'sales.json');
-
         // Ensure file exists
-        if (!checkExistFile(filePath)) {
-            createNewFile(filePath);
+        if (!checkExistFile(salesFilePath)) {
+            createNewFile(salesFilePath);
         }
 
         // Parse existing data
-        const parsingData = parsedData(filePath);
+        const parsingData = parsedData(salesFilePath);
 
         // Ensure unique saleId
         while (checkExistField(parsingData, 'id', saleId)) {
@@ -193,7 +95,7 @@ const startExpressServer = () => {
             await printReceipt(salesData);
 
             // After successful printing, save sales data
-            saveNewData(filePath, parsingData, salesData);
+            saveNewData(salesFilePath, parsingData, salesData);
 
             res.status(200).json({ success: true, message: 'New sales report added and receipt printed' });
         } catch (printError) {
@@ -208,19 +110,25 @@ const startExpressServer = () => {
 
   expressApp.get('/api/sales', (req, res) => {
     try {
-        const filePath = path.join(__dirname, 'saloon-system', 'data', 'sales.json');
-      const salesData = parsedData(filePath);
+      const isExistFile=checkExistFile(salesFilePath)
+      if(!isExistFile){
+        createNewFile(salesFilePath)
+      }
+      const salesData = parsedData(salesFilePath);
       res.status(200).json({ success: true, message: 'All data has been retrieved', data: salesData });
     } catch (error) {
       res.status(500).json({ success: false, message: 'Failed to load data' });
     }
   });
 
-  // services related
+  // services related apis
   expressApp.get('/api/services', (req, res) => {
     try {
-      const filePath = './saloon-system/data/services.json';
-      const servicesData = parsedData(filePath);
+      const isExistFile=checkExistFile(servicesFilePath)
+      if(!isExistFile){
+        createNewFile(servicesFilePath)
+      }
+      const servicesData = parsedData(servicesFilePath)
       res.status(200).json({ success: true, message: 'All data has been retrieved', data: servicesData });
     } catch (error) {
       res.status(500).json({ success: false, message: 'Failed to load data' });
@@ -229,11 +137,9 @@ const startExpressServer = () => {
 
   expressApp.get('/api/services/:serviceId',(req,res)=>{
     const {serviceId}=req.params
-    const filePath = path.join(__dirname, 'saloon-system', 'data', 'services.json');
-
     try {
         // Parse existing services data
-        const servicesData = parsedData(filePath)
+        const servicesData = parsedData(servicesFilePath)
         const targetService=servicesData?.find(service=>service.id===serviceId)
         res.status(200).json({ success: true, message: ' single service has been retrieved', data: targetService });
     }catch(err){
@@ -248,13 +154,12 @@ const startExpressServer = () => {
       const reqData = req.body;
       let serviceData;
 
-      const filePath = './saloon-system/data/services.json';
-      const existFile = checkExistFile(filePath);
+      const existFile = checkExistFile(servicesFilePath);
       if (!existFile) {
-        createNewFile(filePath);
+        createNewFile(servicesFilePath);
       }
 
-      const servicesParsedData = parsedData(filePath);
+      const servicesParsedData = parsedData(servicesFilePath);
 
       const existServiceId = checkExistField(servicesParsedData, 'id', dynamicId);
       const existServiceName = checkExistField(servicesParsedData, 'serviceName', reqData?.serviceName);
@@ -268,7 +173,7 @@ const startExpressServer = () => {
       const timestamp = new Date().toISOString();
 
       serviceData = { ...reqData, id: dynamicId, createdAt: timestamp, updatedAt: timestamp };
-      saveNewData(filePath, servicesParsedData, serviceData);
+      saveNewData(servicesFilePath, servicesParsedData, serviceData);
 
       res.status(200).json({ success: true, message: 'New service added' });
     } catch (error) {
@@ -278,11 +183,9 @@ const startExpressServer = () => {
 
   expressApp.post('/api/deleteService', (req, res) => {
     const{serviceId}=req.body
-    const filePath = path.join(__dirname, 'saloon-system', 'data', 'services.json');
-
     try {
         // Parse existing services data
-        const servicesData = parsedData(filePath);
+        const servicesData = parsedData(servicesFilePath);
 
         // Filter out the service with the matching serviceId
         const filteredServices = servicesData.filter(service => service.id !== serviceId);
@@ -296,7 +199,7 @@ const startExpressServer = () => {
         const jsonData = JSON.stringify(filteredServices, null, 2); // null and 2 are for formatting (indentation)
 
         // Write data to file
-        fs.writeFileSync(filePath, jsonData);
+        fs.writeFileSync(servicesFilePath, jsonData);
     
 
         res.status(200).json({ success: true, message: `Service with ID ${serviceId} deleted successfully` });
@@ -309,11 +212,9 @@ const startExpressServer = () => {
 
 expressApp.put('/api/updateServices', (req, res) => {
   const { serviceId, serviceName, img, price } = req.body;
-  const filePath = path.join(__dirname, 'saloon-system', 'data', 'services.json');
-
   try {
     // Parse existing services data
-    const servicesData = parsedData(filePath);
+    const servicesData = parsedData(servicesFilePath);
 
     // Find the index of the service with the matching serviceId
     const serviceIndex = servicesData.findIndex(service => service?.id === serviceId);
@@ -332,7 +233,7 @@ expressApp.put('/api/updateServices', (req, res) => {
     const jsonData = JSON.stringify(servicesData, null, 2); // null and 2 are for formatting (indentation)
     
     // Write data to file
-    fs.writeFileSync(filePath, jsonData);
+    fs.writeFileSync(servicesFilePath, jsonData);
 
     res.status(200).json({ success: true, message: `Service with ID ${serviceId} updated successfully` });
   } catch (err) {
@@ -340,6 +241,85 @@ expressApp.put('/api/updateServices', (req, res) => {
     res.status(500).json({ success: false, message: 'An error occurred while updating the service' });
   }
 });
+
+
+// stylish related apis 
+expressApp.get('/api/stylishes',(req,res)=>{
+  try {
+    const isExistFile=checkExistFile(stylishesFilePath)
+    if(!isExistFile){
+createNewFile(stylishesFilePath)
+    }
+    const parsedStylish=parsedData(stylishesFilePath)
+    res.status(200).json({ success: true, message: 'all stylish retrived successfully',data:parsedStylish });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'An error occurred while retriving the stylishes' });
+    console.error('the error is',error)
+  }
+})
+
+expressApp.post('/api/stylishes',(req,res)=>{
+ try {
+  const reqData=req.body
+  let dynamicId=generateDynamicId()
+  const parsedStylises=parsedData(stylishesFilePath)
+  while (checkExistField(parsedStylises, 'id', dynamicId)) {
+    dynamicId = generateDynamicId();
+}
+const timestamp = new Date().toISOString();
+const newStylishData={...reqData,id:dynamicId,createdAt:timestamp,updatedAt:timestamp}
+saveNewData(stylishesFilePath,parsedStylises,newStylishData)
+res.status(200).json({ success: true, message: 'a new stylish is added successfully' });
+} catch (error) {
+  res.status(500).json({ success: false, message: 'An error occurred while posting a stylishe' });
+  console.error('the error is',error)
+ }
+})
+
+expressApp.put('/api/updateStylish',(req,res)=>{
+  const{id,stylishName,nationality,passportNumber}=req.body
+  try {
+    const parsedStylishData=parsedData(stylishesFilePath)
+    const stylishIndex = parsedStylishData.findIndex(stylish => stylish?.id === id);
+
+    if (stylishIndex === -1) {
+      return res.status(404).json({ success: false, message: `Service with ID ${id} not found` });
+    }
+
+    if (stylishName) parsedStylishData[stylishIndex].stylishName = stylishName;
+    if (nationality) parsedStylishData[stylishIndex].nationality = nationality;
+    if (passportNumber) parsedStylishData[stylishIndex].passportNumber = passportNumber;
+
+    const jsonData = JSON.stringify(parsedStylishData, null, 2); // null and 2 are for formatting (indentation)
+    
+    // Write data to file
+    fs.writeFileSync(stylishesFilePath, jsonData);
+
+    res.status(200).json({ success: true, message: `Stylish with ID ${id} updated successfully` });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'An error occurred while updating the stylish' });
+    console.error('the error is',error)
+  }
+})
+
+expressApp.delete('/api/deleteStylish/:id',(req,res)=>{
+  const{id}=req.params
+try {
+  const parsedStylishData=parsedData(stylishesFilePath)
+  const updatedStylishData=parsedStylishData?.filter(stylish=>stylish?.id!==id)
+
+        // Save the updated services data
+        const jsonData = JSON.stringify(updatedStylishData, null, 2); // null and 2 are for formatting (indentation)
+
+        // Write data to file
+        fs.writeFileSync(stylishesFilePath, jsonData);
+    
+        res.status(200).json({ success: true, message: `stylish with ID ${id} deleted successfully` });
+    } catch (error) {
+        console.error('Error deleting service:', error);
+        res.status(500).json({ success: false, message: 'Failed to delete stylish' });
+}
+})
 
 
   expressApp.listen(PORT, () => {
