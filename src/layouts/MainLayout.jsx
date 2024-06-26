@@ -3,8 +3,7 @@ import { Outlet } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 
 const MainLayout = () => {
-    const backgroundImageUrl = 'https://media.istockphoto.com/id/1423513079/photo/luxury-hairdressing-and-beauty-salon-interior-with-chairs-mirrors-and-spotlights.webp?b=1&s=170667a&w=0&k=20&c=GTjjLjO1c9SdAGLLJHL3n5sEDdP8dpVXXl3ZpysmxeM='; // Replace with your image URL
-
+    const backgroundImageUrl = 'https://media.istockphoto.com/id/1423513079/photo/luxury-hairdressing-and-beauty-salon-interior-with-chairs-mirrors-and-spotlights.webp?b=1&s=170667a&w=0&k=20&c=GTjjLjO1c9SdAGLLJHL3n5sEDdP8dpVXXl3ZpysmxeM='; 
     return (
         <div 
             className='min-h-screen'

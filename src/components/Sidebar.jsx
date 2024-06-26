@@ -24,13 +24,13 @@ const Sidebar = () => {
         {path:'/',text:'Home'},
         {path:'/services',text:'Services'},
         {path:'/sales-reports',text:'Daily Sales'},
-        {path:'/stylish',text:'Stylish profiles'}
+        {path:'/stylish',text:'Stylishes'}
     ]
     return (
       <Box sx={{ display: 'flex' }}>
       <div className='bg-gray-200 w-full flex items-center justify-between px-12 py-4'> 
         <img className='w-[40px]' src="https://cdn-icons-png.flaticon.com/128/8583/8583104.png" alt="" />
-        <p className='font-bold text-gray-800 text-lg uppercase'>Mohammed Ahmed Saloon</p>
+        <p className='font-bold text-gray-800 text-md uppercase'>Mohammed Ahmed Saloon</p>
       <div className=' text-center cursor-pointer'>
       <Button variant="solid" color="primary" onClick={toggleDrawer(true)}>
           Sidebar

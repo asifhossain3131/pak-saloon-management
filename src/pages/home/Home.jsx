@@ -37,11 +37,11 @@ const Home = () => {
     // calculate total prices 
     const tipsValue = tips ? parseInt(tips) : 0
     const totalSelectedServicePrice = selectedServices.reduce((total, service) => total + parseInt(service.price), 0)
-    const totalAmountWithVatAndTips=parseInt((totalSelectedServicePrice * 1.05).toFixed(2))+parseInt(tipsValue)
+    const totalAmountWithTips=parseInt(totalSelectedServicePrice)+parseInt(tipsValue)
 
     // print functionality 
     const handlePrint=async()=>{
-      const salesData={servicesTaken:selectedServices,stylish:selectedStylish,totalAmount:totalAmountWithVatAndTips,amountExcludingVat:totalSelectedServicePrice}
+      const salesData={servicesTaken:selectedServices,stylish:selectedStylish,totalAmount:totalAmountWithTips,amountExcludingVat:totalSelectedServicePrice}
        const res=await axios.post('http://localhost:5000/api/sales',salesData)
        if(res.data.success===true){
         setSelectedServices([])
@@ -55,7 +55,7 @@ const Home = () => {
     }
     return (
         <div>
-           <h1 className='font-bold text-center  text-black bg-white opacity-70 text-xl'>Saloon payments</h1>
+           <h1 className='font-bold text-center  text-black bg-white opacity-70 text-xl'>Payments Book</h1>
           <div className='mt-8 flex justify-between items-center'>
           <div className='grid grid-cols-2 lg:grid-cols-3 gap-4 w-9/12 justify-center items-center '>
                 {
@@ -96,8 +96,8 @@ const Home = () => {
                     }    
                 </div>
                 <Input className='mb-4' type='number' value={tips} size='sm' onChange={(e)=>setTips(e.target.value)} placeholder="Tips" />
-                {totalSelectedServicePrice!==0 && <p className='text-center text-sm font-bold mt-3'>Amount excluding VAT: {totalSelectedServicePrice}</p>}
-                {totalSelectedServicePrice!==0 && <p className='text-center text-sm font-bold mb-2 mt-3'>Total amount(5% Vat+Tips): {totalAmountWithVatAndTips}</p>}
+                {totalSelectedServicePrice!==0 && <p className='text-center text-sm font-bold mt-3'>Amount including 5% VAT: {totalSelectedServicePrice}</p>}
+                {totalSelectedServicePrice!==0 && <p className='text-center text-sm font-bold mb-2 mt-3'>Total amount(with tips): {totalAmountWithTips}</p>}
           <div className='lg:flex gap-4 justify-between space-y-2 lg:space-y-0 mb-4 '>
           <Select
           value={selectedStylish}
@@ -123,7 +123,7 @@ const Home = () => {
 <Button onClick={()=>window.location.reload()} size="md" variant='solid' color="danger">
           Reset
         </Button>
-<Button disabled={selectedStylish===''|| cashAmount===''||cashAmount>totalAmountWithVatAndTips||cashAmount<0} onClick={handlePrint} size="md" variant='solid' color="success">
+<Button disabled={selectedStylish===''|| cashAmount===''||cashAmount>totalAmountWithTips||cashAmount<0} onClick={handlePrint} size="md" variant='solid' color="success">
           Print 
         </Button>
 </div>}

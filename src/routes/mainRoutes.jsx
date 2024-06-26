@@ -6,6 +6,7 @@ import {
 import MainLayout from "../layouts/MainLayout";
 import Home from "../pages/home/Home";
 import Services from "../pages/services/Services";
+import Stylishes from "../pages/stylish/Stylishes";
 const router = createBrowserRouter([
     {
       path: "/",
@@ -14,9 +15,14 @@ const router = createBrowserRouter([
         {
             path:'/',
             element:<Home></Home>
-        },{
+        },
+        {
             path:'/services',
             element:<Services></Services>
+        },
+        {
+            path:'/stylish',
+            element:<Stylishes></Stylishes>
         }
       ]
     },

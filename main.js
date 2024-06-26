@@ -258,6 +258,20 @@ createNewFile(stylishesFilePath)
   }
 })
 
+
+expressApp.get('/api/stylishes/:stylishId',(req,res)=>{
+  const {stylishId}=req.params
+  try {
+      // Parse existing services data
+      const stylishData = parsedData(stylishesFilePath)
+      const targetStylish=stylishData?.find(stylish=>stylish.id===stylishId)
+      res.status(200).json({ success: true, message: ' single service has been retrieved', data: targetStylish });
+  }catch(err){
+    console.error('Error retriving single service:', err);
+    res.status(500).json({ success: false, message: 'Failed to retrive single service' });
+  }
+})
+
 expressApp.post('/api/stylishes',(req,res)=>{
  try {
   const reqData=req.body
@@ -277,7 +291,7 @@ res.status(200).json({ success: true, message: 'a new stylish is added successfu
 })
 
 expressApp.put('/api/updateStylish',(req,res)=>{
-  const{id,stylishName,nationality,passportNumber}=req.body
+  const{id,stylishName,nationality,employeeId}=req.body
   try {
     const parsedStylishData=parsedData(stylishesFilePath)
     const stylishIndex = parsedStylishData.findIndex(stylish => stylish?.id === id);
@@ -288,7 +302,7 @@ expressApp.put('/api/updateStylish',(req,res)=>{
 
     if (stylishName) parsedStylishData[stylishIndex].stylishName = stylishName;
     if (nationality) parsedStylishData[stylishIndex].nationality = nationality;
-    if (passportNumber) parsedStylishData[stylishIndex].passportNumber = passportNumber;
+    if (employeeId) parsedStylishData[stylishIndex].employeeId = employeeId;
 
     const jsonData = JSON.stringify(parsedStylishData, null, 2); // null and 2 are for formatting (indentation)
     
