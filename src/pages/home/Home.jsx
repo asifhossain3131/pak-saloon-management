@@ -5,21 +5,30 @@ import React, { useEffect, useState } from 'react';
 import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
 import { Button, Input } from '@mui/joy';
 import toast from 'react-hot-toast';
+import axiosInstance from '../../../axios/axiosInstance';
 
 const Home = () => {
     const [allServices,setAllServices]=useState([])
     const [selectedStylish,setSelectedStylish]=useState('')
     const [cashAmount,setCashAmount]=useState('')
     const [tips,setTips]=useState('')
+    const[allStylishes,setAllStylishes]=useState([])
 
     useEffect(()=>{
        const fetchServices=async()=>{
-        const services=await axios.get('http://localhost:5000/api/services')
+        const services=await axiosInstance.get('/services/getAllServices')
         if(services?.data?.success===true){
             setAllServices(services?.data?.data)
         }
        }
+       const fetchStylishes=async()=>{
+        const res=await axiosInstance.get('/stylishes/getAllStylishes')
+        if(res?.data?.success===true){
+            setAllStylishes(res?.data?.data)
+        }
+       }
        fetchServices()
+       fetchStylishes()
     },[])
 
     const [selectedServices, setSelectedServices] = useState([]);
@@ -41,8 +50,8 @@ const Home = () => {
 
     // print functionality 
     const handlePrint=async()=>{
-      const salesData={servicesTaken:selectedServices,stylish:selectedStylish,totalAmount:totalAmountWithTips,amountExcludingVat:totalSelectedServicePrice}
-       const res=await axios.post('http://localhost:5000/api/sales',salesData)
+      const salesData={servicesTaken:selectedServices,stylish:selectedStylish,totalAmount:totalAmountWithTips,amountIncludingVat:totalSelectedServicePrice,cash:cashAmount,tips:tipsValue}
+       const res=await axiosInstance.post('/sales/postSalesData',salesData)
        if(res.data.success===true){
         setSelectedServices([])
         setCashAmount('')
@@ -113,8 +122,8 @@ const Home = () => {
         },
       }}
     >
-        {[{id:'1',stylishName:'mohit'},{id:'2',stylishName:'sabir'},{id:'3',stylishName:'kabir'}].map(stylish=>
-<Option onClick={()=>setSelectedStylish(stylish.stylishName)} key={stylish.id} value={stylish.stylishName}>{stylish.stylishName}</Option>
+        {allStylishes?.map(stylish=>
+<Option onClick={()=>setSelectedStylish(stylish?.stylishName)} key={stylish?.employeeId} value={stylish?.stylishName}>{stylish?.stylishName}</Option>
         )}
     </Select>
     <Input value={cashAmount} onChange={(e)=>setCashAmount(e.target.value)} placeholder="Cash" />

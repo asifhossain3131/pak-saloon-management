@@ -7,6 +7,6 @@ router.get('/getAllStylishes',stylishControllers.getAllStylishes)
 router.get('/getSingleStylish/:stylishId',stylishControllers.getSingleStylish)
 router.post('/postNewStylish',stylishControllers.postNewStylish)
 router.put('/updateStylish',stylishControllers.updateStylish)
-router.delete('/deleteStylish',stylishControllers.deleteStylish)
+router.delete('/deleteStylish/:id',stylishControllers.deleteStylish)
 
 export const StylishRoutes=router

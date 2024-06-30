@@ -14,6 +14,7 @@ import DialogTitle from '@mui/joy/DialogTitle';
 import DialogContent from '@mui/joy/DialogContent';
 import Stack from '@mui/joy/Stack';
 import toast from 'react-hot-toast';
+import axiosInstance from '../../../axios/axiosInstance';
 
 const Stylishes = () => {
     const [open, setOpen] = React.useState(false);
@@ -25,7 +26,7 @@ const Stylishes = () => {
     const [currentSingleStylishId,setCurrentSingleStylishId]=useState('')
     useEffect(() => {
         const fetchStylishes = async () => {
-            const stylishes = await axios.get('http://localhost:5000/api/stylishes');
+            const stylishes = await axiosInstance.get('/stylishes/getAllStylishes');
             if (stylishes?.data?.success === true) {
                 setAllStylish(stylishes?.data?.data);
             }
@@ -38,14 +39,14 @@ const Stylishes = () => {
         const newStylish = { employeeId, stylishName, nationality };
         try {
            if(statusType==='add'){
-            const response = await axios.post('http://localhost:5000/api/stylishes', newStylish);
+            const response = await axiosInstance.post('/stylishes/postNewStylish', newStylish);
             if (response?.data?.success) {
                 toast.success('new stylish added')
                 setAllStylish([...allStylish, newStylish]);
                 setOpen(false);
             }
            }else if(statusType==='update'){
-            const response = await axios.put('http://localhost:5000/api/updateStylish', {...newStylish,id:currentSingleStylishId});
+            const response = await axiosInstance.put('/stylishes/updateStylish', {...newStylish,id:currentSingleStylishId});
             if (response?.data?.success) {
                 toast.success('single stylish updated')
                 setOpen(false);
@@ -59,7 +60,7 @@ const Stylishes = () => {
 
     const handleDeleteStylish=async(stylishId)=>{
         try {
-            const response = await axios.delete(`http://localhost:5000/api/deleteStylish/${stylishId}`);
+            const response = await axiosInstance.delete(`/stylishes/deleteStylish/${stylishId}`);
             if (response?.data?.success) {
                 toast.success(' stylish deleted')
             }
@@ -71,7 +72,7 @@ const Stylishes = () => {
 
     const handleUpdateStylish=async(stylishId)=>{
         try {
-            const response = await axios.get(`http://localhost:5000/api/stylishes/${stylishId}`);
+            const response = await axiosInstance.get(`/stylishes/getSingleStylish/${stylishId}`);
             if (response?.data?.success) {
                const singleStylish=response?.data?.data
                setStylishName(singleStylish?.stylishName)

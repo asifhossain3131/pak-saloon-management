@@ -7,6 +7,6 @@ router.get('/getAllServices',serviceControllers.getAllServices)
 router.get('/getSingleService/:serviceId',serviceControllers.getSingleServiceById)
 router.post('/postNewService',serviceControllers.postService)
 router.post('/deleteService',serviceControllers.deleteService)
-router.put('/getAllServices',serviceControllers.updateService)
+router.put('/updateService',serviceControllers.updateService)
 
 export const ServiceRoutes=router

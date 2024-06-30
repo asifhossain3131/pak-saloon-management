@@ -25,11 +25,11 @@
     "updatedAt": "2024-06-21T20:49:39.350Z"
   },
   {
-    "serviceName": "Beards",
-    "price": "565",
+    "serviceName": "beard",
+    "price": "300",
     "img": "https://cdn-icons-png.flaticon.com/128/10650/10650422.png",
-    "id": "05bb6a98e4a791517bc668d5a9c079c6",
-    "createdAt": "2024-06-25T16:15:52.547Z",
-    "updatedAt": "2024-06-25T16:15:52.547Z"
+    "id": "c1acd4e3a040206a26a08d24bd6127d8",
+    "createdAt": "2024-06-29T20:33:04.580Z",
+    "updatedAt": "2024-06-29T20:33:04.580Z"
   }
 ]

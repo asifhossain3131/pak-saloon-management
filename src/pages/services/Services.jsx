@@ -14,6 +14,7 @@ import DialogTitle from '@mui/joy/DialogTitle';
 import DialogContent from '@mui/joy/DialogContent';
 import Stack from '@mui/joy/Stack';
 import toast from 'react-hot-toast';
+import axiosInstance from '../../../axios/axiosInstance';
 
 const Services = () => {
     const [open, setOpen] = React.useState(false);
@@ -25,7 +26,7 @@ const Services = () => {
     const [currentSingleSeriveId,setCurrentSingleServiceId]=useState('')
     useEffect(() => {
         const fetchServices = async () => {
-            const services = await axios.get('http://localhost:5000/api/services');
+            const services = await axiosInstance.get('/services/getAllServices');
             if (services?.data?.success === true) {
                 setAllServices(services?.data?.data);
             }
@@ -38,14 +39,14 @@ const Services = () => {
         const newService = { serviceName, price, img };
         try {
            if(statusType==='add'){
-            const response = await axios.post('http://localhost:5000/api/services', newService);
+            const response = await axiosInstance.post('/services/postNewService', newService);
             if (response?.data?.success) {
                 toast.success('new service added')
                 setAllServices([...allServices, newService]);
                 setOpen(false);
             }
            }else if(statusType==='update'){
-            const response = await axios.put('http://localhost:5000/api/updateServices', {...newService,serviceId:currentSingleSeriveId});
+            const response = await axiosInstance.put('/services/updateService', {...newService,serviceId:currentSingleSeriveId});
             if (response?.data?.success) {
                 toast.success('single service updated')
                 setOpen(false);
@@ -59,7 +60,7 @@ const Services = () => {
 
     const handleDeleteService=async(serviceId)=>{
         try {
-            const response = await axios.post('http://localhost:5000/api/deleteService',{serviceId});
+            const response = await axiosInstance.post('/services/deleteService',{serviceId});
             if (response?.data?.success) {
                 toast.success(' service deleted')
             }
@@ -71,7 +72,7 @@ const Services = () => {
 
     const handleUpdateService=async(serviceId)=>{
         try {
-            const response = await axios.get(`http://localhost:5000/api/services/${serviceId}`);
+            const response = await axiosInstance.get(`/services/getSingleService/${serviceId}`);
             if (response?.data?.success) {
                const singleService=response?.data?.data
                setServiceName(singleService?.serviceName)

@@ -23,7 +23,7 @@ const Sidebar = () => {
     const sidebarMainItems=[
         {path:'/',text:'Home'},
         {path:'/services',text:'Services'},
-        {path:'/sales-reports',text:'Daily Sales'},
+        {path:'/dailySales',text:'Daily Sales'},
         {path:'/stylish',text:'Stylishes'}
     ]
     return (

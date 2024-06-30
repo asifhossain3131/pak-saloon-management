@@ -46,7 +46,7 @@ const updateService= (req, res) => {
   const reqData = req.body;
   try {
    const result=serviceServices.updateServiceIntoDb(reqData)
-    res.status(200).json({ success: true, message: `Service with ID ${serviceId} updated successfully` ,data:result});
+    res.status(200).json({ success: true, message: `Service with ID ${reqData?.serviceId} updated successfully` ,data:result});
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: 'An error occurred while updating the service' });

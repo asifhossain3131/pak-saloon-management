@@ -4,54 +4,6 @@
       {
         "serviceName": "Haircut(women)",
         "price": "25"
-      }
-    ],
-    "stylish": "sabir",
-    "totalAmount": 25,
-    "id": "c6f1c84517f890cfbda3350eb6d70ea9",
-    "time": "6/22/2024"
-  },
-  {
-    "servicesTaken": [
-      {
-        "serviceName": "Haircut(men)",
-        "price": "25"
-      }
-    ],
-    "stylish": "kabir",
-    "totalAmount": 25,
-    "id": "5bab69c21414d0fe034f48b3bfd63e29",
-    "time": "6/22/2024"
-  },
-  {
-    "servicesTaken": [
-      {
-        "serviceName": "Haircut(men)",
-        "price": "25"
-      }
-    ],
-    "stylish": "mohit",
-    "totalAmount": 25,
-    "id": "0e093201b910f467b3200b617d4235d2",
-    "time": "6/22/2024"
-  },
-  {
-    "servicesTaken": [
-      {
-        "serviceName": "Haircut(women)",
-        "price": "25"
-      }
-    ],
-    "stylish": "sabir",
-    "totalAmount": 25,
-    "id": "76cd767436c4a346de7072e4629a22f9",
-    "time": "6/22/2024"
-  },
-  {
-    "servicesTaken": [
-      {
-        "serviceName": "Haircut(women)",
-        "price": "25"
       },
       {
         "serviceName": "Haircut(men)",
@@ -60,40 +12,36 @@
     ],
     "stylish": "mohit",
     "totalAmount": 50,
-    "id": "4d43beaaafc01a6ac74054e787e2da4e",
-    "time": "6/22/2024"
+    "amountIncludingVat": 50,
+    "cash": "45",
+    "tips": 0,
+    "id": "0cc1b8e7b2707ec1c5fc232fb06cc8b5",
+    "date": "6/30/2024",
+    "time": "1:23 AM"
   },
   {
     "servicesTaken": [
       {
-        "serviceName": "Haircut(it)",
+        "serviceName": "Haircut(women)",
         "price": "25"
-      }
-    ],
-    "stylish": "sabir",
-    "totalAmount": 25,
-    "id": "0fba72a79f3078670467df9a05760457",
-    "time": "6/22/2024"
-  },
-  {
-    "servicesTaken": [
-      {
-        "serviceName": "Haircut(Kidssss)",
-        "price": "20"
       },
       {
         "serviceName": "Haircut(men)",
         "price": "25"
       },
       {
-        "serviceName": "Beard",
-        "price": "30"
+        "serviceName": "Haircut(Kidssss)",
+        "price": "20"
       }
     ],
-    "stylish": "sabir",
-    "totalAmount": 75,
-    "id": "134bc769197dd25311d9e22939ad9a9e",
-    "time": "2024-06-22T09:06:13.073Z"
+    "stylish": "mohit",
+    "totalAmount": 80,
+    "amountIncludingVat": 70,
+    "cash": "65",
+    "tips": 10,
+    "id": "645968420267bd156fa08cba06294c5e",
+    "date": "6/30/2024",
+    "time": "1:23 AM"
   },
   {
     "servicesTaken": [
@@ -102,9 +50,33 @@
         "price": "25"
       }
     ],
-    "stylish": "kabir",
-    "totalAmount": 92,
-    "id": "644e6aa121b75f16a39db2cb056a7f74",
-    "time": "2024-06-22T20:33:26.630Z"
+    "stylish": "mohit",
+    "totalAmount": 68,
+    "amountIncludingVat": 25,
+    "cash": "43",
+    "tips": 43,
+    "id": "e96c4ad5c0c121586ee81370bd2fb651",
+    "date": "6/30/2024",
+    "time": "1:54 AM"
+  },
+  {
+    "servicesTaken": [
+      {
+        "serviceName": "Haircut(men)",
+        "price": "25"
+      },
+      {
+        "serviceName": "Haircut(women)",
+        "price": "25"
+      }
+    ],
+    "stylish": "mohit",
+    "totalAmount": 50,
+    "amountIncludingVat": 50,
+    "cash": "5",
+    "tips": 0,
+    "id": "e28384f92476f7ceae07e6c18e050fbd",
+    "date": "6/30/2024",
+    "time": "11:39 AM"
   }
 ]

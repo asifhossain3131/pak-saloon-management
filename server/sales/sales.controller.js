@@ -13,8 +13,9 @@ import { salesServices } from "./sales.service.js";
 };
 
  const getAllSalesData= (req, res) => {
+  const{salesDate}=req.body
     try {
-     const result=salesServices.getAllSalesDataFromDb()
+     const result=salesServices.getAllSalesDataFromDb(salesDate)
       res.status(200).json({ success: true, message: 'All data has been retrieved', data: result });
     } catch (error) {
       res.status(500).json({ success: false, message: 'Failed to load data' });

@@ -28,15 +28,17 @@ const createWindow = () => {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
       enableRemoteModule: false,
-      nodeIntegration: true,
+      nodeIntegration: false,
     },
   });
-
-  if (process.env.NODE_ENV === 'development') {
-    mainWindow.loadURL('http://localhost:5173/');
-  } else {
-    mainWindow.loadFile(path.join(__dirname, 'dist', 'index.html'));
-  }
+  
+  // if (process.env.NODE_ENV === 'development') {
+  //   mainWindow.loadURL('http://localhost:5173/');
+  // } else {
+  //   mainWindow.loadFile(path.join(__dirname, 'dist', 'index.html'));
+  // }
+  // mainWindow.loadURL('http://localhost:5173/')
+  mainWindow.loadFile(path.join(__dirname, 'dist', 'index.html'));
 
   mainWindow.webContents.openDevTools();
 };

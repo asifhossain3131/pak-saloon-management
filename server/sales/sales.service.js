@@ -17,11 +17,15 @@ while (checkExistField(parsingData, 'id', saleId)) {
 }
 
 // Add new sales data
-const salesData = { ...reqBody, id: saleId, time: new Date().toISOString() };
+const salesData = { ...reqBody, id: saleId, date: new Date().toLocaleDateString(),time: new Date().toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: true,
+  }) };
 
 // Print receipt
 try {
-    await printReceipt(salesData);
+    // await printReceipt(salesData);
 
     // After successful printing, save sales data
      saveNewData(salesFilePath, parsingData, salesData)
@@ -33,13 +37,14 @@ try {
 }
 
 
-const getAllSalesDataFromDb=()=>{
+const getAllSalesDataFromDb=(salesDate)=>{
     const isExistFile=checkExistFile(salesFilePath)
     if(!isExistFile){
       createNewFile(salesFilePath)
     }
     const salesData = parsedData(salesFilePath);
-    return salesData
+    const specificDateSales=salesData?.filter(data=>data?.date===salesDate)
+    return specificDateSales
 }
 
 export const salesServices={

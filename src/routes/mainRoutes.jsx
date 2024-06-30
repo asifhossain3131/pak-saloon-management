@@ -7,6 +7,7 @@ import MainLayout from "../layouts/MainLayout";
 import Home from "../pages/home/Home";
 import Services from "../pages/services/Services";
 import Stylishes from "../pages/stylish/Stylishes";
+import DailySales from "../pages/daily sales/DailySales";
 const router = createBrowserRouter([
     {
       path: "/",
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
         {
             path:'/stylish',
             element:<Stylishes></Stylishes>
+        },
+        {
+          path:'/dailySales',
+          element:<DailySales></DailySales>
         }
       ]
     },
